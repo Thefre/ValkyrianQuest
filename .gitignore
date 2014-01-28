@@ -217,4 +217,18 @@ pip-log.txt
 #############
 ## Unity
 #############
+# OS X only (not needed on other platforms)
+.DS_Store
+*.swp
+*.Trashes
+
+# All platforms
+Unity/Library/
 Unity/Temp/
+Build/
+*.csproj
+*.pidb
+*.unityproj
+*.sln
+*.userprefs
+
