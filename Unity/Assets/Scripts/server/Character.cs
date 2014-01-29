@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Character : Entity {
+public class Character {
 	protected DateTime readyTime;
 
 	public delegate void DeathAction();
@@ -24,6 +24,9 @@ public class Character : Entity {
 	public float endurance = 10;
 	public float agility = 10;
 	public float spirit = 10;
+	public float presence = 10;
+	public float willpower = 10;
+	public float charisma = 10;
 
 	public float attackPower = 10;
 	public float magicPower = 10;
@@ -36,6 +39,9 @@ public class Character : Entity {
 	public float earthDefense = 10;
 	public float accuracy = 10;
 	public float evade = 10;
+	public float mass = 10;
+	public float size = 10;
+
 	
 	public Character target;
 
