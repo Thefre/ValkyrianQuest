@@ -9,7 +9,7 @@ public class SpriteController : MonoBehaviour {
 		anim = GetComponent<Animator>();
 
 		Window newWindow = new Window();
-		newWindow.Initialize(5,5,150,250,AnimTest,"Animation Test");
+		newWindow.Initialize("dev",5,5,150,200,AnimTest,Window.Align.TopLeft,"Animation Test");
 		GUIManager.windows.Add(newWindow);
 
 	}
@@ -20,7 +20,7 @@ public class SpriteController : MonoBehaviour {
 
 	void Update() {
 		if(Input.GetKeyDown(KeyCode.Space)) {
-			SetAnim("KnightBlock");
+			GUIManager.state = "dev";
 		}
 	}
 
