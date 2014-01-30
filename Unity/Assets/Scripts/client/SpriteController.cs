@@ -15,7 +15,7 @@ public class SpriteController : MonoBehaviour {
 
 	void Update() {
 		if(Input.GetKeyDown(KeyCode.Space)) {
-			SetAnim("KnightDeath");
+			SetAnim("KnightHurt");
 		}
 	}
 
