@@ -223,9 +223,22 @@ pip-log.txt
 *.Trashes
 
 # All platforms
-Unity/Library/
-Unity/Temp/
-Build/
+Unity/Library/*
+Unity/Temp/*
+Build/*
+#Un-ignore these specific files
+!Unity/Library/*.asset
+!Unity/Library/AssetImportState
+!Unity/Library/AssetVersioning.db
+!Unity/Library/BuildPlayer.prefs
+!Unity/Library/ScriptMapper
+!Unity/Library/assetservercachev3
+!Unity/Library/expandedItems
+!Unity/Library/guidmapper
+!Unity/Library/unity default resources
+!Unity/Library/unity editor resources
+!Unity/Library/metadata/
+
 *.csproj
 *.pidb
 *.unityproj
