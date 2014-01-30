@@ -16,4 +16,5 @@ public class MainGame : MonoBehaviour {
 	void Update () {
 		fps.PrintGUIText(fpsText);
 	}
+
 }

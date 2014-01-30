@@ -7,6 +7,11 @@ public class SpriteController : MonoBehaviour {
 
 	void Start() {
 		anim = GetComponent<Animator>();
+
+		Window newWindow = new Window();
+		newWindow.Initialize(5,5,150,250,AnimTest,"Animation Test");
+		GUIManager.windows.Add(newWindow);
+
 	}
 
 	public void SetAnim(string id) {
@@ -19,4 +24,17 @@ public class SpriteController : MonoBehaviour {
 		}
 	}
 
+	public void AnimTest() {
+		if (GUILayout.Button("Idle"))
+			SetAnim("KnightIdle");
+		if (GUILayout.Button("Attack"))
+			SetAnim("KnightAttack");
+		if (GUILayout.Button("Hurt"))
+			SetAnim("KnightHurt");
+		if (GUILayout.Button("Block"))
+			SetAnim("KnightBlock");
+		if (GUILayout.Button("Death"))
+			SetAnim("KnightDeath");
+
+	}
 }
