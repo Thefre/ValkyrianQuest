@@ -2,21 +2,13 @@
 using System.Collections;
 
 public class NetworkManager : MonoBehaviour {
-	private enum NetworkState {
-		MainMenu,
-		HostMenu,
-		JoinPublic,
-		JoinPrivate
-	}
-
-	private NetworkState netState = NetworkState.MainMenu;
 	private const string typeName = "TKValkyrianArena";
 	private string gameName = "My Game";
 	private string gamePassword = "";
 	private string joinIP = "localhost";
 	private int gamePort = 25000;
 	private string portString = "25000";
-	private int playerLimit = 4;
+	private int playerLimit = 6;
 	private bool isPrivate = false;
 
 	private HostData[] hostList;
@@ -54,11 +46,75 @@ public class NetworkManager : MonoBehaviour {
 			OnEnterGame();
 		Debug.Log("Server Initialized.");
 	}
-	/*
-	void Start() {
 
+	private void RefreshHostList() {
+		MasterServer.RequestHostList(typeName);
+	}
+	
+	void OnMasterServerEvent(MasterServerEvent msEvent) {
+		if (msEvent == MasterServerEvent.HostListReceived)
+			hostList = MasterServer.PollHostList();
+	}
+	
+	private void JoinServer(HostData hostData)
+	{
+		Network.Connect(hostData);
+	}
+	
+	private void JoinPrivateServer(string ipAddress, int port, string password)
+	{
+		if(password != "") {
+			Network.Connect(ipAddress,port,password);
+		} else {
+			Network.Connect(ipAddress,port);
+		}
+	}
+	
+	void OnConnectedToServer()
+	{
+		if(OnJoinServer != null) //Trigger OnJoinServer
+			OnJoinServer();
+		if(OnEnterGame != null) //Trigger OnEnterGame
+			OnEnterGame();
+		Debug.Log("Server Joined");
+	}
+	
+	void OnPlayerConnected(NetworkPlayer player)
+	{
+		if(OnPlayerJoin != null) //Trigger OnPlayerJoin
+			OnPlayerJoin(player);
+		Debug.Log("Player Connected");
+	} 
+
+	void Start() {
+		Window newWindow = new Window();
+		newWindow.Initialize("dev", 0, 0, 120, 100, ShowMainMenu, Window.Align.Center, "Network Game");
+		GUIManager.windows.Add(newWindow);
+		newWindow = new Window();
+		newWindow.Initialize("hostMenu", 0, 0, 220, 100, ShowHostMenu, Window.Align.Center, "Host Game");
+		GUIManager.windows.Add(newWindow);
 	}
 
+	public void ShowMainMenu() {
+		if(GUILayout.Button("Host Game")) {
+			GUIManager.state = "hostMenu";
+		}
+	}
+
+	public void ShowHostMenu() {
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Game Name:");
+		gameName = GUILayout.TextField(gameName);
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+		GUILayout.Label("Game Port:");
+		gamePort = int.Parse(GUILayout.TextField(gamePort.ToString()));
+		GUILayout.EndHorizontal();
+		if(GUILayout.Button("Back"))
+			GUIManager.state = "dev";
+	}
+
+	/*
 	public void ShowMainMenu() {
 		GUI.Box(new Rect(new Rect(Menu.x-10, Menu.row, 170, (Menu.rowHeight*6)+10)),"Multiplayer");
 		if (GUI.Button(new Rect(Menu.x, Menu.row, 150, Menu.rowHeight), "Host Game")) {
@@ -75,9 +131,6 @@ public class NetworkManager : MonoBehaviour {
 	}
 
 	public void ShowHostMenu() {
-		GUI.Box(new Rect(new Rect(Menu.x-10, Menu.row, 250, (Menu.rowHeight*7)+10)),"Host Game");
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Game Name:");
-		gameName = GUI.TextField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),gameName);
 		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Game Port:");
 		portString = GUI.TextField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),portString.ToString());
 		int num = 0;
@@ -138,42 +191,4 @@ public class NetworkManager : MonoBehaviour {
 		}
 	}
 */
-	private void RefreshHostList() {
-		MasterServer.RequestHostList(typeName);
-	}
-
-	void OnMasterServerEvent(MasterServerEvent msEvent) {
-		if (msEvent == MasterServerEvent.HostListReceived)
-			hostList = MasterServer.PollHostList();
-	}
-
-	private void JoinServer(HostData hostData)
-	{
-		Network.Connect(hostData);
-	}
-
-	private void JoinPrivateServer(string ipAddress, int port, string password)
-	{
-		if(password != "") {
-			Network.Connect(ipAddress,port,password);
-		} else {
-			Network.Connect(ipAddress,port);
-		}
-	}
-
-	void OnConnectedToServer()
-	{
-		if(OnJoinServer != null) //Trigger OnJoinServer
-			OnJoinServer();
-		if(OnEnterGame != null) //Trigger OnEnterGame
-			OnEnterGame();
-		Debug.Log("Server Joined");
-	}
-
-	void OnPlayerConnected(NetworkPlayer player)
-	{
-		if(OnPlayerJoin != null) //Trigger OnPlayerJoin
-			OnPlayerJoin(player);
-		Debug.Log("Player Connected");
-	} 
 }
