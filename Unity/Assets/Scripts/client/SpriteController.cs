@@ -11,7 +11,6 @@ public class SpriteController : MonoBehaviour {
 		Window newWindow = new Window();
 		newWindow.Initialize("dev",5,5,150,200,AnimTest,Window.Align.TopLeft,"Animation Test");
 		GUIManager.windows.Add(newWindow);
-
 	}
 
 	public void SetAnim(string id) {
