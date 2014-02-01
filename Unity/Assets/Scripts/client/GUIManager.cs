@@ -13,4 +13,17 @@ public class GUIManager : MonoBehaviour {
 			}
 		}
 	}
+
+	public static void NewRow() {
+		GUILayout.BeginHorizontal();
+	}
+
+	public static void NextRow() {
+		GUILayout.EndHorizontal();
+		GUILayout.BeginHorizontal();
+	}
+
+	public static void EndRow() {
+		GUILayout.EndHorizontal();
+	}
 }

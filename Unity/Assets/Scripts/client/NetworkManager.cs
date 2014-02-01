@@ -88,67 +88,51 @@ public class NetworkManager : MonoBehaviour {
 
 	void Start() {
 		Window newWindow = new Window();
-		newWindow.Initialize("dev", 0, 0, 120, 100, ShowMainMenu, Window.Align.Center, "Network Game");
+		newWindow.Initialize("networkMenu", 0, 0, 120, 100, ShowMainMenu, Window.Align.Center, "Network Game");
 		GUIManager.windows.Add(newWindow);
 		newWindow = new Window();
-		newWindow.Initialize("hostMenu", 0, 0, 220, 100, ShowHostMenu, Window.Align.Center, "Host Game");
+		newWindow.Initialize("hostMenu", 0, 0, 220, 150, ShowHostMenu, Window.Align.Center, "Host Game");
+		GUIManager.windows.Add(newWindow);
+		newWindow = new Window();
+		newWindow.Initialize("joinPublicMenu", 0, 0, 120, 150, ShowJoinPublic, Window.Align.Center, "Join Game");
+		GUIManager.windows.Add(newWindow);
+		newWindow = new Window();
+		newWindow.Initialize("joinDirectMenu", 0, 0, 220, 150, ShowJoinPrivate, Window.Align.Center, "Direct Connect");
 		GUIManager.windows.Add(newWindow);
 	}
 
 	public void ShowMainMenu() {
-		if(GUILayout.Button("Host Game")) {
+		if(GUILayout.Button("Host Game"))
 			GUIManager.state = "hostMenu";
+		if(GUILayout.Button("Join Public")) {
+			RefreshHostList();
+			GUIManager.state = "joinPublicMenu";
 		}
+		if(GUILayout.Button("Join Direct"))
+			GUIManager.state = "joinDirectMenu";
+		if(GUILayout.Button("Main Menu"))
+			GUIManager.state = "main";
+
 	}
 
 	public void ShowHostMenu() {
-		GUILayout.BeginHorizontal();
+		GUIManager.NewRow();
 		GUILayout.Label("Game Name:");
 		gameName = GUILayout.TextField(gameName);
-		GUILayout.EndHorizontal();
-		GUILayout.BeginHorizontal();
+		GUIManager.NextRow();
 		GUILayout.Label("Game Port:");
 		gamePort = int.Parse(GUILayout.TextField(gamePort.ToString()));
-		GUILayout.EndHorizontal();
-		if(GUILayout.Button("Back"))
-			GUIManager.state = "dev";
-	}
-
-	/*
-	public void ShowMainMenu() {
-		GUI.Box(new Rect(new Rect(Menu.x-10, Menu.row, 170, (Menu.rowHeight*6)+10)),"Multiplayer");
-		if (GUI.Button(new Rect(Menu.x, Menu.row, 150, Menu.rowHeight), "Host Game")) {
-			netState = NetworkState.HostMenu;
-		}
-		if (GUI.Button(new Rect(Menu.x, Menu.row, 150, Menu.rowHeight), "Join Public")) {
-			RefreshHostList();
-			netState = NetworkState.JoinPublic;
-		}
-		if (GUI.Button(new Rect(Menu.x, Menu.row, 150, Menu.rowHeight), "Join Direct"))
-			netState = NetworkState.JoinPrivate;
-		if (GUI.Button(new Rect(Menu.x, Menu.row, 150, Menu.rowHeight), "Main Menu"))
-			showMenu = false;
-	}
-
-	public void ShowHostMenu() {
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Game Port:");
-		portString = GUI.TextField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),portString.ToString());
-		int num = 0;
-		if (int.TryParse(portString, out gamePort))
-		{
-			num = Mathf.Clamp(gamePort, 5000, 48000);
-		}
-		else if (portString == "") num = 0;
-		gamePort = num;
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Password:");
-		gamePassword = GUI.PasswordField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),gamePassword,"*"[0]);
-		isPrivate = GUI.Toggle(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),isPrivate,"Private");
-		if (GUI.Button(new Rect(Menu.x+40, Menu.rowS, 80, Menu.rowHeight), "Create")) {
+		GUILayout.Space(10);
+		isPrivate = GUILayout.Toggle(isPrivate,"Private");
+		GUIManager.NextRow();
+		GUILayout.Label("Password:");
+		gameName = GUILayout.PasswordField(gameName,"*"[0]);
+		GUIManager.NextRow();
+		if(GUILayout.Button("Create"))
 			StartServer();
-		}
-		if (GUI.Button(new Rect(Menu.x+125, Menu.row, 80, Menu.rowHeight), "Cancel")) {
-			netState = NetworkState.MainMenu;
-		}
+		if(GUILayout.Button("Cancel"))
+			GUIManager.state = "networkMenu";
+		GUIManager.EndRow();
 	}
 
 	public void ShowJoinPublic() {
@@ -156,39 +140,33 @@ public class NetworkManager : MonoBehaviour {
 		{
 			for (int i = 0; i < hostList.Length; i++)
 			{
-				if (GUI.Button(new Rect(Menu.x, Menu.row, 150, 25), hostList[i].gameName))
+				if (GUILayout.Button(hostList[i].gameName))
 					JoinServer(hostList[i]);
 			}
 		}
-		if (GUI.Button(new Rect(Screen.width-170, Screen.height-(Menu.rowHeight+5), 80, Menu.rowHeight), "Refresh")) {
+		GUIManager.NewRow();
+		if (GUILayout.Button("Refresh"))
 			RefreshHostList();
-		}
-		if (GUI.Button(new Rect(Screen.width-85, Screen.height-(Menu.rowHeight+5), 80, Menu.rowHeight), "Cancel")) {
-			netState = NetworkState.MainMenu;
-		}
+		if (GUILayout.Button("Cancel"))
+			GUIManager.state = "networkMenu";
+		GUIManager.EndRow();
 	}
 
 	public void ShowJoinPrivate() {
-		GUI.Box(new Rect(new Rect(Menu.x-10, Menu.row, 250, (Menu.rowHeight*6)+10)),"Join Game");
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"IP Address:");
-		joinIP = GUI.TextField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),joinIP);
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Game Port:");
-		portString = GUI.TextField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),portString.ToString());
-		int num = 0;
-		if (int.TryParse(portString, out gamePort))
-		{
-			num = Mathf.Clamp(gamePort, 5000, 48000);
-		}
-		else if (portString == "") num = 0;
-		gamePort = num;
-		GUI.Label(new Rect(new Rect(Menu.x, Menu.rowS, 80, Menu.rowHeight)),"Password:");
-		gamePassword = GUI.PasswordField(new Rect(new Rect(Menu.x+85, Menu.row, 150, Menu.rowHeight)),gamePassword,"*"[0]);
-		if (GUI.Button(new Rect(Menu.x+40, Menu.rowS, 80, Menu.rowHeight), "Join")) {
+		GUIManager.NewRow();
+		GUILayout.Label("IP Address:");
+		joinIP = GUILayout.TextField(joinIP);
+		GUIManager.NextRow();
+		GUILayout.Label("Game Port:");
+		gamePort = int.Parse(GUILayout.TextField(gamePort.ToString()));
+		GUIManager.NextRow();
+		GUILayout.Label("Password:");
+		gameName = GUILayout.PasswordField(gameName,"*"[0]);
+		GUIManager.NextRow();
+		if (GUILayout.Button("Join"))
 			JoinPrivateServer(joinIP,gamePort,gamePassword);
-		}
-		if (GUI.Button(new Rect(Menu.x+125, Menu.row, 80, Menu.rowHeight), "Cancel")) {
-			netState = NetworkState.MainMenu;
-		}
+		if (GUILayout.Button("Cancel"))
+			GUIManager.state = "networkMenu";
+		GUIManager.EndRow();
 	}
-*/
 }

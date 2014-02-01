@@ -9,18 +9,12 @@ public class SpriteController : MonoBehaviour {
 		anim = GetComponent<Animator>();
 
 		Window newWindow = new Window();
-		newWindow.Initialize("dev",5,5,150,200,AnimTest,Window.Align.TopLeft,"Animation Test");
+		newWindow.Initialize("animTest",5,5,150,200,AnimTest,Window.Align.TopLeft,"Animation Test");
 		GUIManager.windows.Add(newWindow);
 	}
 
 	public void SetAnim(string id) {
 		anim.Play(id);
-	}
-
-	void Update() {
-		if(Input.GetKeyDown(KeyCode.Space)) {
-			GUIManager.state = "dev";
-		}
 	}
 
 	public void AnimTest() {
@@ -34,6 +28,7 @@ public class SpriteController : MonoBehaviour {
 			SetAnim("KnightBlock");
 		if (GUILayout.Button("Death"))
 			SetAnim("KnightDeath");
-
+		if (GUILayout.Button("Back"))
+			GUIManager.state = "main";
 	}
 }
