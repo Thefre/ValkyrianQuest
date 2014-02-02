@@ -7,7 +7,6 @@ public class NetworkManager : MonoBehaviour {
 	private string gamePassword = "";
 	private string joinIP = "localhost";
 	private int gamePort = 25000;
-	private string portString = "25000";
 	private int playerLimit = 6;
 	private bool isPrivate = false;
 
