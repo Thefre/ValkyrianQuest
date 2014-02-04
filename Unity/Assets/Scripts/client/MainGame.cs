@@ -14,7 +14,7 @@ public class MainGame : MonoBehaviour {
 
 		// Assign Menus
 		Window newWindow = new Window();
-		newWindow.Initialize("main", 0, 0, 120, 120, MainMenu, Window.Align.Center, "Main Menu");
+		newWindow.Initialize("main", 0, 0, 120, 150, MainMenu, Window.Align.Center, "Main Menu");
 		GUIManager.windows.Add(newWindow);
 	}
 	
@@ -37,6 +37,8 @@ public class MainGame : MonoBehaviour {
 			GUIManager.state = "animTest";
 		if(GUILayout.Button("Console"))
 			GUIManager.state = "devConsole";
+		if(GUILayout.Button("Sprite Editor"))
+			GUIManager.state = "spriteEdit";
 	}
 
 }
