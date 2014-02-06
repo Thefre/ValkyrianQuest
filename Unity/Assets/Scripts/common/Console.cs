@@ -24,7 +24,9 @@ public class Console : MonoBehaviour {
 
 	public static void Write(string txt) {
 		message += "\n"+txt;
-		scrollPosition.y += Mathf.Infinity;
+		if (autoScroll)
+			scrollPosition.y += Mathf.Infinity;
+		OnConsoleInput(message);
 	}
 	
 	public static void DevConsole() {

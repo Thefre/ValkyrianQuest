@@ -7,14 +7,22 @@ public class SpriteEditMain : MonoBehaviour {
 	private Texture2D selectedColor;
 	private GUIStyle selectedColorStyle;
 
+	private SpriteSheetData sheetData;
+
 	private RGBColor mainColor;
 	private bool isDrawing;
+	private int currentColor = 1;
 
 	// Use this for initialization
 	void Start () {
 		selectedColor = new Texture2D(32,32);
 		selectedColorStyle = new GUIStyle();
-		NewCanvas();
+		sheetData = new SpriteSheetData();
+		sheetData.Initialize();
+		canvas.material.mainTexture = sheetData.buffered;
+		//NewCanvas();
+
+		//GUI Elements
 		Console.Bind("spriteEdit", 0, 0, 250, 120);
 		Window newWindow = new Window();
 		newWindow.Initialize("spriteEdit", 0, 0, 120, 25, Toolbar, Window.Align.TopLeft);
@@ -39,32 +47,31 @@ public class SpriteEditMain : MonoBehaviour {
 		if (renderer == null || renderer.sharedMaterial == null || renderer.sharedMaterial.mainTexture == null || meshCollider == null)
 			return;
 
-		if (Input.GetKey(KeyCode.LeftAlt)) {
+		if (hit.transform.gameObject.name == "Canvas") {
+			Texture2D tex = renderer.material.mainTexture as Texture2D;
+			Vector2 pixelUV = hit.textureCoord;
+			Color targetPixel = new Color();
+			
+			pixelUV.x *= tex.width;
+			pixelUV.y *= tex.height;
 			if (Input.GetKeyDown(KeyCode.Mouse0)) {
-				Texture2D tex = renderer.material.mainTexture as Texture2D;
-				Vector2 pixelUV = hit.textureCoord;
-				Color targetPixel = new Color();
-
-				pixelUV.x *= tex.width;
-				pixelUV.y *= tex.height;
-
-				targetPixel = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
-				mainColor.SetColor((int)(targetPixel.r*255.0f),(int)(targetPixel.g*255.0f),(int)(targetPixel.b*255.0f));
-			}
-		} else {
-			if (Input.GetKeyDown(KeyCode.Mouse0)) {
-				isDrawing = true;
+				if (Input.GetKey(KeyCode.LeftAlt)) {
+					
+					
+					targetPixel = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
+					
+					sheetData.SetPaletteColor(currentColor, targetPixel);
+					//				mainColor.SetColor((int)(targetPixel.r*255.0f),(int)(targetPixel.g*255.0f),(int)(targetPixel.b*255.0f));
+				} else {
+					isDrawing = true;
+				}	
 			} else if (Input.GetKeyUp(KeyCode.Mouse0)) {
 				isDrawing = false;
 			}
-		}
-		if (isDrawing) {
-			Texture2D tex = renderer.material.mainTexture as Texture2D;
-			Vector2 pixelUV = hit.textureCoord;
-			pixelUV.x *= tex.width;
-			pixelUV.y *= tex.height;
-			tex.SetPixel((int)pixelUV.x, (int)pixelUV.y, mainColor.GetColor());
-			tex.Apply();
+			
+			if (isDrawing) {
+				sheetData.Draw((int)pixelUV.x, (int)pixelUV.y, currentColor);
+			}
 		}
 	}
 
@@ -112,5 +119,6 @@ public class SpriteEditMain : MonoBehaviour {
 		GUILayout.EndVertical();
 		GUIManager.EndRow();
 		FillTexture(selectedColor, mainColor.GetColor());
+		sheetData.SetPaletteColor(currentColor, mainColor.GetColor());
 	}
 }

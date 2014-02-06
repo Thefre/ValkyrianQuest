@@ -23,7 +23,8 @@ public class MainGame : MonoBehaviour {
 		fps.PrintGUIText(fpsText);
 
 		if(Input.GetKeyDown(KeyCode.Space)) {
-			GUIManager.state = "main";
+			//GUIManager.state = "main";
+			GUIManager.state = "spriteEdit";
 		}
 		if(Input.GetKeyDown(KeyCode.A)) {
 			Console.Write("Test");
