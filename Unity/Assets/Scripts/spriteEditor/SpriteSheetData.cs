@@ -20,6 +20,7 @@ public class SpriteSheetData {
 	public void Initialize() {
 		ResetPalettes();
 		NewSheets(32,1,1);
+		palette = 2;
 	}
 
 	public void NewSheets(int tile, int width, int height) {
@@ -42,18 +43,21 @@ public class SpriteSheetData {
 		for (int x = 0; x < 32; x++) {
 			for (int y = 0; y < 32; y++) {
 				if(y==0) {
-					colorPalettes.SetPixel(x+1,y+1,new Color((float)(x/255),(float)(x/255),(float)(x/255),1));
+					colorPalettes.SetPixel(x+1,y+1,new Color((float)x,(float)x,(float)x,1));
+
 				} else {
-					colorPalettes.SetPixel(x+1,y+1,new Color((float)((x*7)/255),(float)((x*7)/255),(float)((x*7)/255),1));
+					colorPalettes.SetPixel(x+1,y+1,new Color((((float)x*7)/255),(((float)x*7)/255),(((float)x*7)/255),1));
+					Debug.Log(colorPalettes.GetPixel(x+1,y+1));
 				}
 			}
 		}
+		colorPalettes.Apply();
 	}
 
 	public void SetPaletteColor(int colorID, Color color) {
 		for (int x = 0; x < baseSheet.width; x++) {
 			for (int y = 0; y < baseSheet.height; y++) {
-				if(baseSheet.GetPixel(x,y) == colorPalettes.GetPixel(colorID,1)) {
+				if(baseSheet.GetPixel(x,y) == colorPalettes.GetPixel(colorID,1) && coloredSheet.GetPixel(x,y) != colorPalettes.GetPixel(colorID,palette)) {
 					coloredSheet.SetPixel(x,y,color);
 				}
 			}

@@ -6,6 +6,8 @@ public class SpriteEditMain : MonoBehaviour {
 	private Texture2D canvasTex;
 	private Texture2D selectedColor;
 	private GUIStyle selectedColorStyle;
+	private Texture2D[] paletteColors = new Texture2D[32];
+	private GUIStyle[] paletteStyles = new GUIStyle[32];
 
 	private SpriteSheetData sheetData;
 
@@ -17,8 +19,10 @@ public class SpriteEditMain : MonoBehaviour {
 	void Start () {
 		selectedColor = new Texture2D(32,32);
 		selectedColorStyle = new GUIStyle();
+
 		sheetData = new SpriteSheetData();
 		sheetData.Initialize();
+		SetPalettes();
 		canvas.material.mainTexture = sheetData.buffered;
 		//NewCanvas();
 
@@ -29,6 +33,9 @@ public class SpriteEditMain : MonoBehaviour {
 		GUIManager.windows.Add(newWindow);
 		newWindow = new Window();
 		newWindow.Initialize("spriteEdit", 0, 0, 290, 90, Palette, Window.Align.BottomLeft);
+		GUIManager.windows.Add(newWindow);
+		newWindow = new Window();
+		newWindow.Initialize("spriteEdit", 0, 0, 290, 90, Swatches, Window.Align.Bottom);
 		GUIManager.windows.Add(newWindow);
 		mainColor = new RGBColor();
 		mainColor.SetColor(0,0,0);
@@ -80,11 +87,11 @@ public class SpriteEditMain : MonoBehaviour {
 		canvasTex.anisoLevel = 1;
 		canvasTex.filterMode = FilterMode.Point;
 		canvasTex.wrapMode = TextureWrapMode.Clamp;
-		FillTexture(canvasTex, new Color32(0,0,0,0));
+		FillTexture(canvasTex, new Color(0,0,0,0));
 		canvas.material.mainTexture = canvasTex;
 	}
 
-	public void FillTexture(Texture2D texty, Color32 color) {
+	public void FillTexture(Texture2D texty, Color color) {
 		for (int y = 0; y < texty.height; ++y)
 		{
 			for (int x = 0; x < texty.width; ++x)
@@ -120,5 +127,33 @@ public class SpriteEditMain : MonoBehaviour {
 		GUIManager.EndRow();
 		FillTexture(selectedColor, mainColor.GetColor());
 		sheetData.SetPaletteColor(currentColor, mainColor.GetColor());
+	}
+
+	private void SetPalettes() {
+		for (int p = 0; p < paletteStyles.Length; p++) {
+			paletteColors[p] = new Texture2D(16,16);
+			FillTexture(paletteColors[p], sheetData.GetPaletteColor(p+1));
+			paletteStyles[p] = new GUIStyle();
+			paletteStyles[p].normal.background = paletteColors[p];
+		}
+	}
+
+	private void Swatches() {
+		GUIManager.NewRow();
+		for (int y = 0; y < 4; ++y)
+		{
+			for (int x = 0; x < 8; ++x)
+			{
+				if (GUILayout.Button("",paletteStyles[x+(y*8)],GUILayout.Width(16),GUILayout.Height(16))){
+					currentColor = x+1+(y*8);
+					Debug.Log(currentColor);
+				}
+			}
+			if (y == 3)
+				GUIManager.EndRow();
+			else
+				GUIManager.NextRow();
+		}
+
 	}
 }
