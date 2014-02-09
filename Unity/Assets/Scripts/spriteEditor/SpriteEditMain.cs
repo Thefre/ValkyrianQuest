@@ -35,7 +35,7 @@ public class SpriteEditMain : MonoBehaviour {
 		newWindow.Initialize("spriteEdit", 0, 0, 290, 90, Palette, Window.Align.BottomLeft);
 		GUIManager.windows.Add(newWindow);
 		newWindow = new Window();
-		newWindow.Initialize("spriteEdit", 0, 0, 290, 90, Swatches, Window.Align.Bottom);
+		newWindow.Initialize("spriteEdit", 0, 0, 138, 74, Swatches, Window.Align.Bottom);
 		GUIManager.windows.Add(newWindow);
 		mainColor = new RGBColor();
 		mainColor.SetColor(0,0,0);
@@ -68,7 +68,7 @@ public class SpriteEditMain : MonoBehaviour {
 					targetPixel = tex.GetPixel((int)pixelUV.x, (int)pixelUV.y);
 					
 					sheetData.SetPaletteColor(currentColor, targetPixel);
-					//				mainColor.SetColor((int)(targetPixel.r*255.0f),(int)(targetPixel.g*255.0f),(int)(targetPixel.b*255.0f));
+					mainColor.SetColor((int)(targetPixel.r*255.0f),(int)(targetPixel.g*255.0f),(int)(targetPixel.b*255.0f));
 				} else {
 					isDrawing = true;
 				}	
@@ -126,6 +126,7 @@ public class SpriteEditMain : MonoBehaviour {
 		GUILayout.EndVertical();
 		GUIManager.EndRow();
 		FillTexture(selectedColor, mainColor.GetColor());
+		FillTexture(paletteColors[currentColor-1], mainColor.GetColor());
 		sheetData.SetPaletteColor(currentColor, mainColor.GetColor());
 	}
 
@@ -147,6 +148,8 @@ public class SpriteEditMain : MonoBehaviour {
 				if (GUILayout.Button("",paletteStyles[x+(y*8)],GUILayout.Width(16),GUILayout.Height(16))){
 					currentColor = x+1+(y*8);
 					Debug.Log(currentColor);
+					Color targetColor =  sheetData.GetPaletteColor(currentColor);
+					mainColor.SetColor((int)(targetColor.r*255.0f),(int)(targetColor.g*255.0f),(int)(targetColor.b*255.0f));
 				}
 			}
 			if (y == 3)

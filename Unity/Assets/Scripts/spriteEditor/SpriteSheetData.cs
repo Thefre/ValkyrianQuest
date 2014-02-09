@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class SpriteSheetData {
 	public int tileSize;
@@ -17,10 +18,21 @@ public class SpriteSheetData {
 		}
 	}
 
+	public List<SpriteLayer> layers = new List<SpriteLayer>();
+
 	public void Initialize() {
 		ResetPalettes();
 		NewSheets(32,1,1);
 		palette = 2;
+	}
+
+	public void NewLayer(int x, int y, int size) {
+		SpriteLayer newLayer = new SpriteLayer();
+		newLayer.source = baseSheet;
+		newLayer.x = x;
+		newLayer.y = y;
+		newLayer.size = size;
+		layers.Add(newLayer);
 	}
 
 	public void NewSheets(int tile, int width, int height) {
@@ -43,7 +55,7 @@ public class SpriteSheetData {
 		for (int x = 0; x < 32; x++) {
 			for (int y = 0; y < 32; y++) {
 				if(y==0) {
-					colorPalettes.SetPixel(x+1,y+1,new Color((float)x,(float)x,(float)x,1));
+					colorPalettes.SetPixel(x+1,y+1,new Color(((float)x/255),((float)x/255),((float)x/255),1));
 
 				} else {
 					colorPalettes.SetPixel(x+1,y+1,new Color((((float)x*7)/255),(((float)x*7)/255),(((float)x*7)/255),1));
@@ -88,6 +100,7 @@ public class SpriteSheetData {
 
 	public void Draw(int x, int y, int colorID) {
 		baseSheet.SetPixel(x,y,colorPalettes.GetPixel(colorID,1));
+		Debug.Log(colorPalettes.GetPixel(colorID,1));
 		coloredSheet.SetPixel(x,y,colorPalettes.GetPixel(colorID,palette));
 		baseSheet.Apply();
 		coloredSheet.Apply();
